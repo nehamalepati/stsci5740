@@ -8,11 +8,15 @@ data <- read.csv('wine-quality-white-and-red.csv', sep=',')
 red <- read.csv('winequality-red.csv', sep=';')
 white <- read.csv('winequality-white.csv', sep=';')
 data <- clean_names(data)
+red <- clean_names(red)
+white <- clean_names(white)
 
 # summary statistics
 quant_vals <- sapply(data, is.numeric)
 summary(data[, quant_vals])
 cor(data[, quant_vals])
+summary(red)
+summary(white)
 
 # scatterplots
 pairs(data[, quant_vals])
@@ -23,6 +27,16 @@ train_idx <- createDataPartition(data$quality, p = 0.7, list = FALSE, times = 1)
 data_train <- data[train_idx,]
 data_test  <- data[-train_idx,]
 
+set.seed(7)
+red_idx <- createDataPartition(red$quality, p = 0.7, list = FALSE, times = 1)
+red_train <- red[red_idx,]
+red_test  <- red[-red_idx,]
+
+set.seed(7)
+white_idx <- createDataPartition(white$quality, p = 0.7, list = FALSE, times = 1)
+white_train <- white[white_idx,]
+white_test  <- white[-white_idx,]
+
 # linear regression
 linear <- lm(quality ~ volatile_acidity + chlorides + total_sulfur_dioxide + p_h + sulphates + alcohol, data = data_train)
 summary(linear)
@@ -30,6 +44,20 @@ pred_linear <- predict(linear, data_test)
 linear_error <- mean(pred_linear != data_test$quality)
 print("Test Error for Linear: ")
 print(linear_error)
+
+linear_red <- lm(quality ~ volatile_acidity + chlorides + total_sulfur_dioxide + p_h + sulphates + alcohol, data = red_train)
+summary(linear_red)
+pred_linear_red <- predict(linear_red, red_test)
+linear_red_error <- mean(pred_linear_red != red_test$quality)
+print("Test Error for Linear (Red): ")
+print(linear_red_error)
+
+linear_white <- lm(quality ~ volatile_acidity + chlorides + total_sulfur_dioxide + p_h + sulphates + alcohol, data = white_train)
+summary(linear_white)
+pred_linear_white <- predict(linear_white, white_test)
+linear_white_error <- mean(pred_linear_white != white_test$quality)
+print("Test Error for Linear (White): ")
+print(linear_white_error)
 
 # logistic regression
 data$rating = if_else(data$quality >= 6, 1, 0 )
@@ -44,6 +72,30 @@ logistic_error <- mean(pred_logistic != data_test$rating)
 print("Test Error for Logistic: ")
 print(logistic_error)
 
+red$rating = if_else(red$quality >= 6, 1, 0 )
+set.seed(7)
+red_idx <- createDataPartition(white$quality, p = 0.7, list = FALSE, times = 1)
+red_train <- red[red_idx,]
+red_test  <- red[-red_idx,]
+logistic_red <- glm(rating ~ volatile_acidity + chlorides + total_sulfur_dioxide + p_h + sulphates + alcohol, family=binomial, data=red_train)
+summary(logistic_red)
+pred_logistic_red = predict(logistic_red, red_test) > 0.5
+logistic_error_red <- mean(pred_logistic_red != red_test$rating)
+print("Test Error for Logistic (Red): ")
+print(logistic_error_red)
+
+white$rating = if_else(white$quality >= 6, 1, 0 )
+set.seed(7)
+white_idx <- createDataPartition(white$quality, p = 0.7, list = FALSE, times = 1)
+white_train <- white[white_idx,]
+white_test  <- white[-white_idx,]
+logistic_white <- glm(rating ~ volatile_acidity + chlorides + total_sulfur_dioxide + p_h + sulphates + alcohol, family=binomial, data=white_train)
+summary(logistic_white)
+pred_logistic_white = predict(logistic_white, white_test) > 0.5
+logistic_error_white <- mean(pred_logistic_white != white_test$rating)
+print("Test Error for Logistic (White): ")
+print(logistic_error_white)
+
 # knn model
 features = c("volatile_acidity", "chlorides", "total_sulfur_dioxide", "p_h", "sulphates", "alcohol")
 kset<-c(1:9,seq(10,60,5))
@@ -57,6 +109,32 @@ test_error
 print("Test Error for KNN: ")
 print(test_error)
 print(kset[which.min(test_error)])
+
+red_train <- na.omit(red_train)
+kset<-c(1:9,seq(10,60,5))
+test_error_red<-c()
+for(num_k in kset)
+{
+  predknn_k1 = knn(red_train[, features], red_test[, features], red_train$quality, k=num_k)
+  test_error_red<-c(test_error_red,mean(predknn_k1 != red_test$quality))
+}
+test_error_red
+print("Test Error for KNN (Red): ")
+print(test_error_red)
+print(kset[which.min(test_error_red)])
+
+white_train <- na.omit(white_train)
+kset<-c(1:9,seq(10,60,5))
+test_error_white<-c()
+for(num_k in kset)
+{
+  predknn_k1 = knn(white_train[, features], white_test[, features], white_train$quality, k=num_k)
+  test_error_white<-c(test_error_white,mean(predknn_k1 != white_test$quality))
+}
+test_error_white
+print("Test Error for KNN (White): ")
+print(test_error_white)
+print(kset[which.min(test_error_white)])
 
 # regression trees
 
