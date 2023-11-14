@@ -29,8 +29,6 @@ summary(data[, quant_vals])
 # comb_data pre processing (remove outliers)
 
 # boxplots and scatterplots
-# pairs(red)
-# pairs(white)
 pairs(data[, quant_vals])
 
 # linear regression
@@ -42,9 +40,7 @@ confint(pred, conf.level=0.95)
 
 plot(pred)
 
-effect_plot(model = pred, pred = alcohol, interval = TRUE, plot.points = TRUE)
-
-d = comb_data.frame(pred$model, pred$residuals)
+d = data.frame(pred$model, pred$residuals)
 
 with(d, sd(pred.residuals))
 
@@ -52,7 +48,7 @@ with(subset(d, alcohol > 8 & alcohol < 15), sd(pred.residuals))
 
 d$resid <- as.numeric(d$pred.residuals)
 
-ggplot2(aes(y = resid, x = round(alcohol, 2)), comb_data = d) + geom_line(stat = "summary", fun.y = sd)
+ggplot(aes(y = resid, x = round(alcohol, 2)), data = d) + geom_line(stat = "summary")
 
 # Logistic regression
 # KNN model 
