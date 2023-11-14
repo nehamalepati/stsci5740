@@ -25,6 +25,20 @@ summary(white)
 # scatterplots
 pairs(data[, quant_vals])
 
+# boxplots
+par(mfrow = c(3, 4))
+boxplot(fixed_acidity ~ quality, data = data, main = "Fixed Acidity vs Quality")
+boxplot(volatile_acidity ~ quality, data = data, main = "Volatile Acidity vs Quality")
+boxplot(citric_acid ~ quality, data = data, main = "Citric Acid vs Quality")
+boxplot(residual_sugar ~ quality, data = data, main = "Residual Sugar vs Quality")
+boxplot(chlorides ~ quality, data = data, main = "Chlorides vs Quality")
+boxplot(free_sulfur_dioxide ~ quality, data = data, main = "Free Sulfur Dioxide vs Quality")
+boxplot(total_sulfur_dioxide ~ quality, data = data, main = "Total Sulfur Dioxide vs Quality")
+boxplot(density ~ quality, data = data, main = "Density vs Quality")
+boxplot(p_h ~ quality, data = data, main = "pH vs Quality")
+boxplot(sulphates ~ quality, data = data, main = "Sulphates vs Quality")
+boxplot(alcohol ~ quality, data = data, main = "Alcohol vs Quality")
+
 # split into test and train
 set.seed(7)
 train_idx <- createDataPartition(data$quality, p = 0.7, list = FALSE, times = 1)
