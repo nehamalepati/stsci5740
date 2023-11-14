@@ -1,23 +1,9 @@
 # install necessary libraries
-# library(plyr)
-# library(readr)
-# library(data.table)
-# library(dplyr)
-# library(tidyr)
-# library(ggplot2)
-# library(Hmisc)
-# library(zoo)
-# library(lubridate)
-# library(caret)
-# library(kknn)
-# library(gbm)
-# library(mlr)
 library(ISLR)
 library(class)
 library(janitor)
 
-
-# read comb_data
+# read data
 data <- read.csv('wine-quality-white-and-red.csv', sep=',')
 red <- read.csv('winequality-red.csv', sep=';')
 white <- read.csv('winequality-white.csv', sep=';')
@@ -25,13 +11,10 @@ data <- clean_names(data)
 
 # summary statistics
 quant_vals <- sapply(data, is.numeric)
-# quant_vals <- c("fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality")
 summary(data[, quant_vals])
 cor(data[, quant_vals])
 
-# data pre processing (remove outliers)
-
-# boxplots and scatterplots
+# scatterplots
 pairs(data[, quant_vals])
 
 # split into test and train
@@ -61,7 +44,7 @@ logistic_error <- mean(pred_logistic != data_test$rating)
 print("Test Error for Logistic: ")
 print(logistic_error)
 
-# KNN model
+# knn model
 features = c("volatile_acidity", "chlorides", "total_sulfur_dioxide", "p_h", "sulphates", "alcohol")
 kset<-c(1:9,seq(10,60,5))
 test_error<-c()
@@ -75,4 +58,5 @@ print("Test Error for KNN: ")
 print(test_error)
 print(kset[which.min(test_error)])
 
-# Regression Trees
+# regression trees
+
