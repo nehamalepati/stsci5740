@@ -57,21 +57,21 @@ white_train <- white[white_idx, ]
 white_test <- white[-white_idx, ]
 
 # linear regression
-linear <- lm(quality ~ fixed_acidity + volatile_acidity + density + alcohol, data = data_train)
+linear <- lm(quality ~ volatile_acidity + chlorides + density + alcohol, data = data_train)
 summary(linear)
 pred_linear <- predict(linear, data_test)
 mae_linear <- mae(data_test$quality, pred_linear)
 print("Mean Absolute Error for Linear: ")
 print(mae_linear)
 
-linear_red <- lm(quality ~ fixed_acidity + volatile_acidity + density + alcohol, data = red_train)
+linear_red <- lm(quality ~ volatile_acidity + chlorides + density + alcohol, data = red_train)
 summary(linear_red)
 pred_linear_red <- predict(linear_red, red_test)
 mae_linear_red <- mae(red_test$quality, pred_linear_red)
 print("Mean Absolute Error for Linear (Red): ")
 print(mae_linear_red)
 
-linear_white <- lm(quality ~ fixed_acidity + volatile_acidity + density + alcohol, data = white_train)
+linear_white <- lm(quality ~ volatile_acidity + chlorides + density + alcohol, data = white_train)
 summary(linear_white)
 pred_linear_white <- predict(linear_white, white_test)
 mae_linear_white <- mae(white_test$quality, pred_linear_white)
@@ -84,7 +84,7 @@ set.seed(7)
 train_idx <- createDataPartition(data$quality, p = 0.7, list = FALSE, times = 1)
 data_train <- data[train_idx, ]
 data_test <- data[-train_idx, ]
-logistic <- glm(rating ~ type + fixed_acidity + volatile_acidity + density + alcohol, family = binomial, data = data_train)
+logistic <- glm(rating ~ type + volatile_acidity + chlorides + density + alcohol, family = binomial, data = data_train)
 summary(logistic)
 pred_logistic <- predict(logistic, data_test) > 0.5
 logistic_error <- mean(pred_logistic != data_test$rating)
@@ -96,7 +96,7 @@ set.seed(7)
 red_idx <- createDataPartition(white$quality, p = 0.7, list = FALSE, times = 1)
 red_train <- red[red_idx, ]
 red_test <- red[-red_idx, ]
-logistic_red <- glm(rating ~ fixed_acidity + volatile_acidity + density + alcohol, family = binomial, data = red_train)
+logistic_red <- glm(rating ~ volatile_acidity + chlorides + density + alcohol, family = binomial, data = red_train)
 summary(logistic_red)
 pred_logistic_red <- predict(logistic_red, red_test) > 0.5
 logistic_error_red <- mean(pred_logistic_red != red_test$rating)
@@ -108,7 +108,7 @@ set.seed(7)
 white_idx <- createDataPartition(white$quality, p = 0.7, list = FALSE, times = 1)
 white_train <- white[white_idx, ]
 white_test <- white[-white_idx, ]
-logistic_white <- glm(rating ~ fixed_acidity + volatile_acidity + density + alcohol, family = binomial, data = white_train)
+logistic_white <- glm(rating ~ volatile_acidity + chlorides + density + alcohol, family = binomial, data = white_train)
 summary(logistic_white)
 pred_logistic_white <- predict(logistic_white, white_test) > 0.5
 logistic_error_white <- mean(pred_logistic_white != white_test$rating)
@@ -116,7 +116,7 @@ print("Test Error for Logistic (White): ")
 print(logistic_error_white)
 
 # knn model
-features <- c("fixed_acidity", "volatile_acidity", "density", "alcohol")
+features <- c("volatile_acidity", "chlorides", "density", "alcohol")
 kset <- c(1:9, seq(10, 60, 5))
 test_error <- c()
 for (num_k in kset)
@@ -156,21 +156,21 @@ print(test_error_white)
 print(kset[which.min(test_error_white)])
 
 # lda model
-lda <- lda(quality ~ fixed_acidity + volatile_acidity + density + alcohol, data = data_train)
+lda <- lda(quality ~ volatile_acidity + chlorides + density + alcohol, data = data_train)
 summary(lda)
 pred_lda <- predict(lda, data_test)
 lda_error <- mean(pred_lda$class != data_test$quality)
 print("Test Error for LDA: ")
 print(lda_error)
 
-lda_red <- lda(quality ~ fixed_acidity + volatile_acidity + density + alcohol, data = red_train)
+lda_red <- lda(quality ~ volatile_acidity + chlorides + density + alcohol, data = red_train)
 summary(lda_red)
 pred_lda_red <- predict(lda_red, red_test)
 lda_error_red <- mean(pred_lda_red$class != red_test$quality)
 print("Test Error for LDA (Red): ")
 print(lda_error_red)
 
-lda_white <- lda(quality ~ fixed_acidity + volatile_acidity + density + alcohol, data = white_train)
+lda_white <- lda(quality ~ volatile_acidity + chlorides + density + alcohol, data = white_train)
 summary(lda_white)
 pred_lda_white <- predict(lda, white_test)
 lda_error_white <- mean(pred_lda_white$class != white_test$quality)
