@@ -6,6 +6,7 @@ library(Metrics)
 library(rpart)
 library(caret)
 library(dplyr)
+library(MASS)
 
 # read data
 data <- read.csv("wine-quality-white-and-red.csv", sep = ",")
@@ -140,27 +141,24 @@ print("Test Error for KNN (White): ")
 print(test_error_white)
 print(kset[which.min(test_error_white)])
 
-# classification and regression tree model
-set.seed(7)
-data$rating <- if_else(data$quality >= 4, 1, 0)
-data$rating <- as.factor(data$rating)
+# lda model
+lda <- lda(quality ~ volatile_acidity + chlorides + total_sulfur_dioxide + p_h + sulphates + alcohol, data = data_train)
+summary(lda)
+pred_lda <- predict(lda, data_test)
+lda_error <- mean(pred_lda$class != data_test$quality)
+print("Test Error for LDA: ")
+print(lda_error)
 
-train_indices <- sample(seq_len(nrow(data)), size = 0.7 * nrow(data))
-data_train <- data[train_indices, ]
-data_test <- data[-train_indices, ]
+lda_red <- lda(quality ~ volatile_acidity + chlorides + total_sulfur_dioxide + p_h + sulphates + alcohol, data = red_train)
+summary(lda_red)
+pred_lda_red <- predict(lda_red, red_test)
+lda_error_red <- mean(pred_lda_red$class != red_test$quality)
+print("Test Error for LDA (Red): ")
+print(lda_error_red)
 
-x_train <- data_train[, c(1:14)]
-x_test <- data_test[, c(1:14)]
-y_train <- data_train$rating
-y_test <- data_test$rating
-
-cart <- rpart(y_train ~ ., data = x_train, method = "class")
-cart_predict <- predict(cart, x_test, type = "class")
-
-# confusion matrix
-print(table(y_test, cart_predict))
-
-# recall = 1939 / (1939 + 0) = 100%
-# accuracy = (1939 + 11) / (1939 + 11 + 0 + 0) = 100%
-# precision = 1939 / (1939 + 0) = 100%
-# fscore = 2 * ((1 * 1) / 1 + 1) = 1
+lda_white <- lda(quality ~ volatile_acidity + chlorides + total_sulfur_dioxide + p_h + sulphates + alcohol, data = white_train)
+summary(lda_white)
+pred_lda_white <- predict(lda, white_test)
+lda_error_white <- mean(pred_lda_white$class != white_test$quality)
+print("Test Error for LDA (White): ")
+print(lda_error_white)
